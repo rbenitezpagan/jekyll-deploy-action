@@ -85,7 +85,7 @@ jobs:
       - uses: actions/checkout@v3
 
       # Use GitHub Actions' cache to cache dependencies on servers
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
           path: vendor/bundle
           key: ${{ runner.os }}-gems-${{ hashFiles('**/Gemfile.lock') }}
@@ -146,6 +146,35 @@ git push origin gh-pages
 
 **💡 Tip:** The `gh-pages` branch is only for the site static files and the `master` branch is for source code.
 
+## ✨ FAQ
+
+If you use [jekyll-last-modified-at](https://github.com/gjtorikian/jekyll-last-modified-at) plugin, you can configure the checkout action to fetch all commit history so that plugin could use the last Git commit date to determine a page's last modified date.
+
+```yaml
+- uses: actions/checkout@v3
+  with:
+    # The checkout action doesn't provide a way to get all commit history for a single branch
+    # So we use the magic number 2147483647 here which means infinite depth for git fetch
+    # See https://github.com/actions/checkout/issues/520, https://stackoverflow.com/a/6802238
+    fetch-depth: 2147483647
+```
+
+If your site building needs some specific environments, here are some recipes
+for you:
+
+```yaml
+# NodeJS
+pre_build_commands: pacman -S --noconfirm nodejs npm
+
+# Python
+pre_build_commands: pacman -S --noconfirm python
+
+# Gem RMagick
+pre_build_commands: pacman -S --noconfirm imagemagick
+
+# Jekyll-Picture-Tag
+pre_build_commands: pacman -S --noconfirm libvips lcms2 openjpeg2 libpng libwebp libheif imagemagick openslide libjxl poppler-glib
+```
 
 ## 🌱 Credits
 
